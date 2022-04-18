@@ -8,9 +8,23 @@ export default new Vuex.Store({
   state: {
     list: [],
     inputValue: 'aaa',
-    nextId: 5
+    nextId: 5,
+    whichbtn: 'all'
   },
   getters: {
+    getNotDone(state) {
+      return state.list.filter((item) => !item.done).length
+    },
+    getNewList(state) {
+      switch (state.whichbtn) {
+        case 'all':
+          return state.list
+        case 'notDone':
+          return state.list.filter((item) => !item.done)
+        case 'done':
+          return state.list.filter((item) => item.done)
+      }
+    }
   },
   mutations: {
     setList(state, data) {
@@ -28,6 +42,20 @@ export default new Vuex.Store({
       state.list.push(obj)
       state.inputValue = ''
       state.nextId++
+    },
+    deleteItem(state, id) {
+      const index = state.list.findIndex((item) => item.id === id)
+      state.list.splice(index, 1)
+    },
+    changeChecked(state, obj) {
+      const index = state.list.findIndex((item) => item.id === obj.id)
+      state.list[index].done = obj.checked
+    },
+    changeStateBtn(state, btnName) {
+      state.whichbtn = btnName
+    },
+    removeDoneItem(state) {
+      state.list = state.list.filter((item) => !item.done)
     }
   },
   actions: {
@@ -37,6 +65,5 @@ export default new Vuex.Store({
       context.commit('setList', res)
     }
   },
-  modules: {
-  }
+  modules: {}
 })
